@@ -19,7 +19,7 @@ jobs:
           flutter create --org com.melk --project-name ledcontrol app
           cp main.dart app/lib/main.dart
           cd app
-          flutter pub add flutter_blue_plus permission_handler noise_meter
+          flutter pub add flutter_blue_plus:1.35.5 permission_handler:11.3.1 noise_meter:5.0.2
           sed -i 's#<application#<uses-permission android:name="android.permission.BLUETOOTH_SCAN"/>\n    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>\n    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>\n    <uses-permission android:name="android.permission.RECORD_AUDIO"/>\n    <application#' android/app/src/main/AndroidManifest.xml
           sed -i 's/minSdk = flutter.minSdkVersion/minSdk = 23/' android/app/build.gradle.kts || true
           sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 23/' android/app/build.gradle || true
