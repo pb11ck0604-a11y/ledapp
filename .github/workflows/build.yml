@@ -13,7 +13,7 @@ jobs:
           java-version: '17'
       - uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version: '3.27.4'
       - name: Create project
         run: |
           flutter create --org com.melk --project-name ledcontrol app
