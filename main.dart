@@ -1,0 +1,34 @@
+name: Build APK
+on:
+  workflow_dispatch:
+  push:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Create project
+        run: |
+          flutter create --org com.melk --project-name ledcontrol app
+          cp main.dart app/lib/main.dart
+          cd app
+          flutter pub add flutter_blue_plus permission_handler noise_meter
+          sed -i 's#<application#<uses-permission android:name="android.permission.BLUETOOTH_SCAN"/>\n    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>\n    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>\n    <uses-permission android:name="android.permission.RECORD_AUDIO"/>\n    <application#' android/app/src/main/AndroidManifest.xml
+          sed -i 's/minSdk = flutter.minSdkVersion/minSdk = 23/' android/app/build.gradle.kts || true
+          sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 23/' android/app/build.gradle || true
+      - name: Build arm64 APK
+        working-directory: app
+        run: |
+          flutter build apk --release --target-platform android-arm64
+          unzip -l build/app/outputs/flutter-apk/app-release.apk | grep lib/arm64-v8a
+      - uses: actions/upload-artifact@v4
+        with:
+          name: LedControl-APK
+          path: app/build/app/outputs/flutter-apk/app-release.apk
